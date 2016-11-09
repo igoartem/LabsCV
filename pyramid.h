@@ -16,4 +16,4 @@ public:
     Pyramid(CVImage &img, double startSigma, int sizeLevel, int sizeOctave);
 };
 
-#endif // PYRAMID_H
+#endif

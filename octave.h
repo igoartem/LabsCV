@@ -14,4 +14,4 @@ public:
 
 };
 
-#endif // OCTAVE_H
+#endif
