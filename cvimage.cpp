@@ -211,18 +211,19 @@ shared_ptr<CVImage> CVImage::separated(shared_ptr<MyKernel> kernelX, shared_ptr<
     return result;
 }
 
-
 shared_ptr<CVImage> CVImage::separatedGauss(double sigma){
     auto sepGauss = MyKernel::getGaussSeparated(sigma);
     auto result = separated(sepGauss.first, sepGauss.second);
     return result;
 }
 
-
-
-
-
-
-
-
-
+shared_ptr<CVImage> CVImage::downScale()
+{
+   int newHeight = height / 2;
+   int newWidth = width / 2;
+   shared_ptr<CVImage> result = make_shared<CVImage>(newHeight, newWidth);
+   for(int i = 0; i < newHeight; i++)
+       for(int j = 0; j < newWidth; j++)
+           result->setPixel(i,j, getPixel(i*2,j*2));
+   return result;
+}

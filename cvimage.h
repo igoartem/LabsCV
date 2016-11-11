@@ -38,6 +38,8 @@ class CVImage{
         shared_ptr<CVImage> separated(shared_ptr<MyKernel> kernelX, shared_ptr<MyKernel> kernelY);
 
         shared_ptr<CVImage> separatedGauss(double sigma);
+
+        shared_ptr<CVImage> downScale();
 };
 
 #endif // CVIMAGE_H
