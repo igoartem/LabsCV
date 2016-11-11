@@ -106,7 +106,7 @@ shared_ptr<CVImage> CVImage::loadImage(const QString& fileName){
     }
     int width = qimg.size().width();
     int height = qimg.size().height();
-    qDebug()<<"Size image: width=" << width <<" height="<<height;
+    qDebug()<<"New Image. Size image: width=" << width <<" height="<<height;
 
     shared_ptr<CVImage> cvimage = make_shared<CVImage>(height,width);
 
@@ -122,19 +122,20 @@ shared_ptr<CVImage> CVImage::loadImage(const QString& fileName){
     return cvimage;
 }
 
-void CVImage::saveImage(shared_ptr<CVImage> img, QString file){
-    auto size = QSize(img->getWidth(),img->getHeight());
+void CVImage::saveImage(QString file){
+    auto size = QSize(getWidth(),getHeight());
     QImage qimg(size,QImage::Format_RGB32);
-    for(int i=0;i<img->getHeight();i++)
+    for(int i=0;i<getHeight();i++)
     {
-        for(int j=0;j<img->getWidth();j++)
+        for(int j=0;j<getWidth();j++)
         {
-            int pixel = doubleToInt(img->getPixel(i,j));
+            int pixel = doubleToInt(getPixel(i,j));
             // int pixel = img->getPixel(i,j);
             qimg.setPixel(j,i,qRgb(pixel,pixel,pixel));
         }
     }
-    qimg.save(file,"PNG");
+    qimg.save(file,"png");
+    qDebug()<<"Save image "<< file << " succes: width=" << width <<" height="<<height;
 }
 
 
@@ -148,12 +149,12 @@ int CVImage::doubleToInt(double val)
     return int(val*255);
 }
 
-shared_ptr<CVImage> CVImage::convolution(shared_ptr<CVImage> img, shared_ptr<MyKernel> kernel){
+shared_ptr<CVImage> CVImage::convolution(shared_ptr<MyKernel> kernel){
 
-    shared_ptr<CVImage> newImg = make_shared<CVImage>(img->getHeight(),img->getWidth());
+    shared_ptr<CVImage> newImg = make_shared<CVImage>(getHeight(),getWidth());
 
-    for(int i=0;i<img->getHeight();i++){
-        for(int j=0;j<img->getWidth();j++){
+    for(int i=0;i<getHeight();i++){
+        for(int j=0;j<getWidth();j++){
             double sum =0;
             for(int _i=0;_i<kernel->getHeight();_i++){
                 for(int _j=0;_j<kernel->getWidth();_j++){
@@ -163,7 +164,7 @@ shared_ptr<CVImage> CVImage::convolution(shared_ptr<CVImage> img, shared_ptr<MyK
                     // double val = img->getPixel(posX,posY); //разные виды краевых значений
                     // double val = img->getPixelCopy(posX,posY);
                     // double val = img->getPixelMirror(posX,posY);
-                    double val = img->getPixel(posX,posY);
+                    double val = getPixel(posX,posY);
                     double ker = kernel->get(kernel->getHeight()-1-_i,kernel->getWidth()-1-_j);
 
                     sum+=val*ker;
@@ -176,36 +177,51 @@ shared_ptr<CVImage> CVImage::convolution(shared_ptr<CVImage> img, shared_ptr<MyK
     return newImg;
 }
 
-shared_ptr<CVImage> CVImage::normalize(shared_ptr<CVImage> img){
-    shared_ptr<CVImage> newImg = make_shared<CVImage>(img->getHeight(),img->getWidth());
+shared_ptr<CVImage> CVImage::normalize(){
+    shared_ptr<CVImage> newImg = make_shared<CVImage>(getHeight(),getWidth());
     double min=10, max=-10;
 
-    auto result = std::minmax_element (img->getBeginImage(),img->getBeginImage() + img->getWidth()*img->getHeight());
+    auto result = std::minmax_element (getBeginImage(),getBeginImage() + getWidth()*getHeight());
     min= *result.first;
     max = *result.second;
 
-    for(int i=0;i<img->getHeight();i++){
-        for(int j=0;j<img->getWidth();j++){
-            newImg->setPixel(i,j,((img->getPixel(i,j)-min)/(max-min)));
+    for(int i=0;i<getHeight();i++){
+        for(int j=0;j<getWidth();j++){
+            newImg->setPixel(i,j,((getPixel(i,j)-min)/(max-min)));
         }
     }
     return newImg;
 }
 
-shared_ptr<CVImage> CVImage::sobel(shared_ptr<CVImage> img, double sobelX[9], double sobelY[9]){
-    auto sobX = make_shared<MyKernel>(3,3,sobelX);
-    auto sobY = make_shared<MyKernel>(3,3,sobelY);
-    auto sX = convolution(img,sobX);
-    auto sY = convolution(img,sobY);
-    auto newImg = make_shared<CVImage>(img->getHeight(),img->getWidth());
+shared_ptr<CVImage> CVImage::sobel(shared_ptr<MyKernel> sobX, shared_ptr<MyKernel> sobY){
+    auto sX = convolution(sobX);
+    auto sY = convolution(sobY);
+    auto newImg = make_shared<CVImage>(getHeight(),getWidth());
 
-    for(int i=0;i<img->getHeight();i++){
-        for(int j=0;j<img->getWidth();j++){
+    for(int i=0;i<getHeight();i++){
+        for(int j=0;j<getWidth();j++){
             newImg->setPixel(i,j,sqrt(sX->getPixel(i,j) * sX->getPixel(i,j) + sY->getPixel(i,j) * sY->getPixel(i,j)));
         }
     }
     return newImg;
 }
+
+shared_ptr<CVImage> CVImage::separated(shared_ptr<MyKernel> kernelX, shared_ptr<MyKernel> kernelY){
+    auto result = convolution(kernelX)->convolution(kernelY);
+    return result;
+}
+
+
+shared_ptr<CVImage> CVImage::separatedGauss(double sigma){
+    auto sepGauss = MyKernel::getGaussSeparated(sigma);
+    auto result = separated(sepGauss.first, sepGauss.second);
+    return result;
+}
+
+
+
+
+
 
 
 

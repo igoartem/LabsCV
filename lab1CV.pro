@@ -12,13 +12,11 @@ SOURCES += main.cpp \
     cvimage.cpp \
     mykernel.cpp \
     pyramid.cpp \
-    octave.cpp \
-    level.cpp
+    levelPyramid.cpp
 
 HEADERS += \
     cvimage.h \
     mykernel.h \
     pyramid.h \
-    octave.h \
-    level.h
+    levelPyramid.h
 

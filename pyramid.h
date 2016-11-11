@@ -1,19 +1,18 @@
 #ifndef PYRAMID_H
 #define PYRAMID_H
 #include<memory>
-#include<octave.h>
+#include<levelPyramid.h>
 using namespace std;
 
 class Pyramid
 {
 private:
-    unique_ptr<Octave[]> octave;
-    double startSigma;
-    int sizeOctave;
-    int sizeLevel;
+   vector<LevelPyramid> octave;
+   int numerOctave;
+   double k;     //для очередной сигмы
 public:
     Pyramid();
-    Pyramid(CVImage &img, double startSigma, int sizeLevel, int sizeOctave);
+
 };
 
 #endif
