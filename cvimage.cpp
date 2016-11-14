@@ -97,7 +97,7 @@ void CVImage::setPixel(int i, int j, double pixel){
     image[i*width + j] = pixel;
 }
 
-shared_ptr<CVImage> CVImage::loadImage(const QString& fileName){
+shared_ptr<CVImage> CVImage::loadImage(QString fileName){
     QImage qimg;
     bool loaded = qimg.load(fileName);
     if(!loaded){

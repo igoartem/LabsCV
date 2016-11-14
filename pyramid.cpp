@@ -38,17 +38,15 @@ Pyramid::Pyramid(shared_ptr<CVImage> image, double sigma0, int numLevels)
 
 }
 
-void Pyramid::save(QString fileName)
+void Pyramid::save()
 {
     for(int i = 0, ei = int(this->octave.size()); i < ei; i++)
     {
         for(int j = 0; j < this->octave[i].size(); j++)
         {
-            //float trueSigma = sigma0 * pow(k,i  - (i  / (numLevels+1)));
-            QString finalFileName = "11\\" + QString::number(i) + "-" + QString::number(j) + "-sig-" + QString::number(octave[i].globalSigma(j)) + ".jpg";
-//            this->octave[i].getLayer(j// .(fileName);
-               shared_ptr<CVImage> img = octave[i].getLayer(j);
-               img->saveImage(finalFileName);
+            shared_ptr<CVImage> img = octave[i].getLayer(j);
+            QString fileName = "pyramid\\" + QString::number(i) + "-" + QString::number(j) + "-sig-" + QString::number(octave[i].globalSigma(j)) + ".jpg";
+            img-> saveImage(fileName);
         }
     }
 

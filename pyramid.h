@@ -15,7 +15,7 @@ private:
 
 public:
     Pyramid(shared_ptr<CVImage> image, double sigma0, int numLevels);
-    void save(QString fileName);
+    void save();
     double L(int x, int y, double sigma);
 
 };

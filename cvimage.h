@@ -11,6 +11,7 @@ class CVImage{
     private:
         int height,width;
         unique_ptr<double[]> image;
+        unique_ptr<QString> nameFile;
 
     public:
         CVImage();
@@ -24,7 +25,7 @@ class CVImage{
         double getPixelMirror(int i, int j);
         double getPixelWrap(int i, int j);
         void setPixel(int i,int j,double pixel);
-        static shared_ptr<CVImage> loadImage(const QString& fileName);
+        static shared_ptr<CVImage> loadImage(QString fileName);
         void saveImage(QString file);
         static double intToDouble(int val);
         static int doubleToInt(double val);

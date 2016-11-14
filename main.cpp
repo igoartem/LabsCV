@@ -32,8 +32,8 @@ int main(){
 //    CVImage::loadImage(nameImageSova)->separatedGauss(5)->normalize()->saveImage("5gaus55.png");
 //    CVImage::loadImage(nameImageSova)->separatedGauss(10)->normalize()->saveImage("10gaus1010.png");
 
-    shared_ptr<Pyramid> pyramid = make_shared<Pyramid>(CVImage::loadImage(nameImageSova), 1.6, 10);
-    pyramid->save("");
+    shared_ptr<Pyramid> pyramid = make_shared<Pyramid>(CVImage::loadImage(nameImage), 1.5, 2);
+    pyramid->save();
 //    cout<<myIm->getPixel(1000,1000)<<endl;
 //    cout<<p.L(1000,1000,3)<<endl;
 //    cout<<p.L(1000,1000,6)<<endl;
